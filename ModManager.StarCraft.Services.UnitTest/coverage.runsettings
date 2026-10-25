@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <Include>
+            [ModManager.StarCraft.Services]ModManager.StarCraft.Services.Service
+            [ModManager.StarCraft.Services]ModManager.StarCraft.Services.Settings
+            [ModManager.StarCraft.Services]ModManager.StarCraft.Services.ZipService
+            [ModManager.StarCraft.Services]ModManager.StarCraft.Services.Log.Logger
+          </Include>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
