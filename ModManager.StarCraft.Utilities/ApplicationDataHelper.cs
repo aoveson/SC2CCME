@@ -4,7 +4,7 @@ using Interface;
 
 public static class ApplicationDataHelper
 {
-    public static IApplicationDataFileSystem FileSystem { get; set; } = new PhysicalApplicationDataFileSystem();
+    public static IFileSystem FileSystem { get; set; } = new PhysicalFileSystem();
 
     /// <summary>
     /// Resolves an operating-system special-folder path.
