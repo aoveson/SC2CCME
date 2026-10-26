@@ -7,18 +7,28 @@ on:
   workflow_dispatch:
     inputs:
       release_type:
-        description: "Publish a prerelease or stable release"
+        description: "Publish a Pre-Release or Stable Release"
         required: true
         default: prerelease
         type: choice
         options:
           - prerelease
           - release
-      platforms:
-        description: "all or a comma-separated subset of windows,linux,macos"
+      windows:
+        description: "Build for Windows"
         required: false
-        default: all
-        type: string
+        default: true
+        type: boolean
+      linux:
+        description: "Build for Linux"
+        required: false
+        default: true
+        type: boolean
+      macos:
+        description: "Build for macOS"
+        required: false
+        default: true
+        type: boolean
 
 env:
   BASE_VERSION: "1.0"
@@ -32,6 +42,7 @@ concurrency:
 
 jobs:
   prepare:
+    name: Prepare
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.inputs.outputs.version }}
@@ -39,14 +50,17 @@ jobs:
       platforms: ${{ steps.inputs.outputs.platforms }}
       matrix: ${{ steps.inputs.outputs.matrix }}
     steps:
-      - name: Validate release inputs and create platform matrix
+      - name: Validate Release Inputs and Create Platform Matrix
         id: inputs
         env:
           BASE_VERSION: ${{ env.BASE_VERSION }}
           RUN_NUMBER: ${{ github.run_number }}
           EVENT_NAME: ${{ github.event_name }}
           RELEASE_TYPE_INPUT: ${{ inputs.release_type }}
-          PLATFORM_INPUT: ${{ inputs.platforms }}
+          # Map checkbox inputs (defaults to true on push / fallback)
+          WIN_INPUT: ${{ github.event_name == 'push' || inputs.windows }}
+          LINUX_INPUT: ${{ github.event_name == 'push' || inputs.linux }}
+          MACOS_INPUT: ${{ github.event_name == 'push' || inputs.macos }}
         run: |
           node <<'NODE'
           const fs = require('node:fs');
@@ -68,14 +82,15 @@ jobs:
             linux: { platform: 'linux', runner: 'ubuntu-latest', rid: 'linux-x64' },
             macos: { platform: 'macos', runner: 'macos-15', rid: 'osx-arm64' },
           };
-          const rawPlatforms = process.env.PLATFORM_INPUT.trim().toLowerCase();
-          const selected = process.env.EVENT_NAME === 'push' || rawPlatforms === '' || rawPlatforms === 'all'
-            ? Object.keys(supported)
-            : [...new Set(rawPlatforms.split(',').map(value => value.trim()).filter(Boolean))];
 
-          const invalid = selected.filter(platform => !Object.hasOwn(supported, platform));
-          if (selected.length === 0 || invalid.length > 0) {
-            throw new Error(`Invalid platforms: ${invalid.join(', ') || '(empty)'}. Choose all or a comma-separated subset of windows,linux,macos.`);
+          // Collect selected platforms based on checkboxes
+          const selected = [];
+          if (String(process.env.WIN_INPUT) === 'true') selected.push('windows');
+          if (String(process.env.LINUX_INPUT) === 'true') selected.push('linux');
+          if (String(process.env.MACOS_INPUT) === 'true') selected.push('macos');
+
+          if (selected.length === 0) {
+            throw new Error('Invalid platforms: You must select at least one platform checkbox.');
           }
 
           const matrix = selected.map(platform => supported[platform]);
@@ -86,7 +101,7 @@ jobs:
           NODE
 
   unit-tests:
-    name: Unit tests
+    name: Unit Tests
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -100,12 +115,12 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Run xUnit tests, collect coverage, and output TRX
+      - name: Run xUnit Tests, Collect Coverage, and Output TRX
         run: >-
           dotnet test SC2CCME.slnx
           --configuration Release
           --collect:"XPlat Code Coverage"
-          --logger "trx;LogFileName=test-results.trx"
+          --logger "trx"
           --results-directory "$RUNNER_TEMP/TestResults"
 
       - name: Publish Unit Test Results to GitHub Summary
@@ -117,9 +132,9 @@ jobs:
           reporter: dotnet-trx
           fail-on-error: true
 
-      - name: Upload raw coverage results
+      - name: Upload Raw Coverage Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: raw-coverage-${{ github.run_id }}
           path: ${{ runner.temp }}/TestResults/**/coverage.cobertura.xml
@@ -127,7 +142,7 @@ jobs:
           retention-days: 7
 
   coverage-report:
-    name: Coverage report
+    name: Coverage Report
     needs: unit-tests
     runs-on: ubuntu-latest
     steps:
@@ -137,7 +152,7 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Download raw coverage results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: raw-coverage-${{ github.run_id }}
           path: ${{ runner.temp }}/TestResults
@@ -152,11 +167,11 @@ jobs:
           "-targetdir:$RUNNER_TEMP/CoverageReport"
           "-reporttypes:Html;Cobertura;MarkdownSummaryGithub"
 
-      - name: Add coverage summary to workflow
+      - name: Add Coverage Summary to Workflow
         run: cat "$RUNNER_TEMP/CoverageReport/SummaryGithub.md" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report-${{ github.run_id }}
           path: ${{ runner.temp }}/CoverageReport/
@@ -178,7 +193,7 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Install Linux AppImage dependency
+      - name: Install Linux AppImage Dependency
         if: matrix.platform == 'linux'
         run: |
           sudo apt-get update
@@ -198,8 +213,8 @@ jobs:
         shell: bash
         run: bash BuildScripts/build-macos.sh "${{ needs.prepare.outputs.version }}" "${{ matrix.rid }}"
 
-      - name: Upload Velopack assets for publishing
-        uses: actions/upload-artifact@v4
+      - name: Upload Velopack Assets for Publishing
+        uses: actions/upload-artifact@v7
         with:
           name: velopack-release-${{ matrix.platform }}-${{ needs.prepare.outputs.version }}
           path: BuildScripts/artifacts/${{ matrix.rid }}/releases/
@@ -207,6 +222,7 @@ jobs:
           retention-days: 7
 
   publish:
+    name: Publish
     needs: [prepare, package, coverage-report]
     runs-on: ubuntu-latest
     steps:
@@ -215,18 +231,18 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Install pinned VPK CLI
+      - name: Install Pinned VPK CLI
         shell: bash
         run: dotnet tool install vpk --tool-path "$RUNNER_TEMP/vpk" --version 1.2.161
 
-      - name: Download platform packages
-        uses: actions/download-artifact@v4
+      - name: Download Platform Packages
+        uses: actions/download-artifact@v8
         with:
           pattern: velopack-release-*-${{ needs.prepare.outputs.version }}
           path: ${{ runner.temp }}/velopack-releases
           merge-multiple: false
 
-      - name: Merge platform assets into one GitHub release
+      - name: Merge Platform Assets Into GitHub Release
         shell: bash
         env:
           RELEASE_VERSION: ${{ needs.prepare.outputs.version }}

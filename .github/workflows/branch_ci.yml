@@ -18,6 +18,7 @@ concurrency:
 
 jobs:
   prepare:
+    name: Prepare
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.inputs.outputs.version }}
@@ -68,7 +69,7 @@ jobs:
           NODE
 
   unit-tests:
-    name: Unit tests
+    name: Unit Tests
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -82,12 +83,12 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Run xUnit tests, collect coverage, and output TRX
+      - name: Run xUnit Tests, Collect Coverage, and Output TRX
         run: >-
           dotnet test SC2CCME.slnx
           --configuration Release
           --collect:"XPlat Code Coverage"
-          --logger "trx;LogFileName=test-results.trx"
+          --logger "trx"
           --results-directory "$RUNNER_TEMP/TestResults"
 
       - name: Publish Unit Test Results to GitHub Summary
@@ -99,9 +100,9 @@ jobs:
           reporter: dotnet-trx
           fail-on-error: true
 
-      - name: Upload raw coverage results
+      - name: Upload Raw Coverage Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: raw-coverage-${{ github.run_id }}
           path: ${{ runner.temp }}/TestResults/**/coverage.cobertura.xml
@@ -109,7 +110,7 @@ jobs:
           retention-days: 7
 
   coverage-report:
-    name: Coverage report
+    name: Coverage Report
     needs: unit-tests
     runs-on: ubuntu-latest
     steps:
@@ -118,8 +119,8 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Download raw coverage results
-        uses: actions/download-artifact@v4
+      - name: Download Raw Coverage Results
+        uses: actions/download-artifact@v8
         with:
           name: raw-coverage-${{ github.run_id }}
           path: ${{ runner.temp }}/TestResults
@@ -134,11 +135,11 @@ jobs:
           "-targetdir:$RUNNER_TEMP/CoverageReport"
           "-reporttypes:Html;Cobertura;MarkdownSummaryGithub"
 
-      - name: Add coverage summary to workflow
+      - name: Add Coverage Summary to Workflow
         run: cat "$RUNNER_TEMP/CoverageReport/SummaryGithub.md" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report-${{ github.run_id }}
           path: ${{ runner.temp }}/CoverageReport/
@@ -146,6 +147,7 @@ jobs:
           retention-days: 7
 
   package:
+    name: Package
     needs: [prepare, unit-tests]
     strategy:
       fail-fast: false
@@ -160,7 +162,7 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Install Linux AppImage dependency
+      - name: Install Linux AppImage Dependency
         if: matrix.platform == 'linux'
         run: |
           sudo apt-get update
@@ -180,8 +182,8 @@ jobs:
         shell: bash
         run: bash BuildScripts/build-macos.sh "${{ needs.prepare.outputs.version }}" "${{ matrix.rid }}"
 
-      - name: Upload Velopack artifacts for testing
-        uses: actions/upload-artifact@v4
+      - name: Upload Velopack Artifacts for Testing
+        uses: actions/upload-artifact@v7
         with:
           name: velopack-ci-${{ matrix.platform }}-${{ needs.prepare.outputs.version }}
           path: BuildScripts/artifacts/${{ matrix.rid }}/releases/
