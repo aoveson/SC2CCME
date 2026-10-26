@@ -15,7 +15,7 @@ if ($Version -notmatch '^\d+\.\d+\.\d+(\.\d+)?(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]
 
 $VpkVersion = "1.2.161"
 $PackId = "SC2CCME"
-$AppName = "StarCraft 2 Custom Campaign Manager"
+$AppName = "StarCraft 2 Custom Campaign Manager Extended"
 $RepositoryRoot = Split-Path -Parent $PSScriptRoot
 $ProjectPath = Join-Path $RepositoryRoot "ModManager.StarCraft.Application/ModManager.StarCraft.Application.csproj"
 $ArtifactDirectory = Join-Path $PSScriptRoot "artifacts/$RuntimeIdentifier"
