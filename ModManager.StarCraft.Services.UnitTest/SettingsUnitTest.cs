@@ -2,6 +2,8 @@ using ModManager.StarCraft.Services;
 using ModManager.StarCraft.Services.Settings;
 using ModManager.StarCraft.Services.Settings.Interface;
 using ModManager.StarCraft.Services.Updater.Enum;
+using ModManager.StarCraft.Utilities;
+using ModManager.StarCraft.Utilities.Interface;
 using System.Reflection;
 
 namespace ModManager.StarCraft.Services.UnitTest;
@@ -11,14 +13,13 @@ public sealed class SettingsUnitTest : IDisposable
 {
     private readonly ISettingsStore _originalStore = ApplicationSettings.Store;
     private readonly Func<string> _originalDataPathFactory = ApplicationSettings.SettingsDataPathFactory;
-    private readonly ModManager.StarCraft.Utilities.Interface.IApplicationDataFileSystem _originalApplicationDataFileSystem =
-        ModManager.StarCraft.Utilities.ApplicationDataHelper.FileSystem;
+    private readonly IFileSystem _originalApplicationDataFileSystem = ApplicationDataHelper.FileSystem;
 
     /// <summary>Configures an isolated settings path and application-data filesystem.</summary>
     public SettingsUnitTest()
     {
         ApplicationSettings.SettingsDataPathFactory = () => "memory";
-        ModManager.StarCraft.Utilities.ApplicationDataHelper.FileSystem = new InMemoryApplicationDataFileSystem();
+        ModManager.StarCraft.Utilities.ApplicationDataHelper.FileSystem = new InMemoryFileSystem();
     }
 
     /// <summary>Restores the process-wide settings and filesystem seams.</summary>
@@ -137,12 +138,6 @@ public sealed class SettingsUnitTest : IDisposable
         Assert.Equal("https://example.test/update", settings.WebUpdateSourceUri);
         Assert.Equal("updates", settings.DirectoryUpdateSourcePath);
 
-    }
-
-    private sealed class InMemoryApplicationDataFileSystem : ModManager.StarCraft.Utilities.Interface.IApplicationDataFileSystem
-    {
-        public bool DirectoryExists(string path) => false;
-        public void CreateDirectory(string path) { }
     }
 
     private sealed class InMemorySettingsStore : ISettingsStore

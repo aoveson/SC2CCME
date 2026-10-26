@@ -1,4 +1,4 @@
-using ModManager.StarCraft.Base.Interface;
+using ModManager.StarCraft.Utilities.Interface;
 using ModManager.StarCraft.Services;
 using ModManager.StarCraft.Services.Log;
 using ModManager.StarCraft.Services.Log.Enum;
@@ -6,6 +6,7 @@ using ModManager.StarCraft.Services.Log.IO;
 using ModManager.StarCraft.Services.Settings;
 using ModManager.StarCraft.Services.Settings.Interface;
 using ModManager.StarCraft.Services.Updater.Enum;
+using ModManager.StarCraft.Utilities;
 
 namespace ModManager.StarCraft.Base.UnitTest;
 
@@ -140,4 +141,6 @@ internal sealed class InMemoryFileSystem : IFileSystem
         string relative = child[(normalized.Length + 1)..];
         return option == SearchOption.AllDirectories || !relative.Contains('/');
     }
+
+    public async Task<byte[]> ReadAllBytesAsync(string path) => await Task.Run(() => ReadText(path).Select(x => (byte)x).ToArray());
 }

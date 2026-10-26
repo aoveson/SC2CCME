@@ -1,6 +1,7 @@
 using System.Reflection;
 using ModManager.StarCraft.Base.Enum;
 using ModManager.StarCraft.Services.Settings;
+using ModManager.StarCraft.Utilities.Interface;
 
 namespace ModManager.StarCraft.Base.UnitTest;
 
@@ -82,7 +83,7 @@ public sealed class StartupUnitTest : IDisposable
         await (Task)typeof(Startup).GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(startup, null)!;
 
     /// <summary>Records directory creation while delegating all other operations to the fake filesystem.</summary>
-    private sealed class RecordingFileSystem(InMemoryFileSystem inner, List<string> created) : ModManager.StarCraft.Base.Interface.IFileSystem
+    private sealed class RecordingFileSystem(InMemoryFileSystem inner, List<string> created) : IFileSystem
     {
         public string[] GetFiles(string path, string searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly) => inner.GetFiles(path, searchPattern, searchOption);
         public string[] GetDirectories(string path, string searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly) => inner.GetDirectories(path, searchPattern, searchOption);
@@ -95,5 +96,6 @@ public sealed class StartupUnitTest : IDisposable
         public void MoveFile(string sourcePath, string destinationPath) => inner.MoveFile(sourcePath, destinationPath);
         public void MoveDirectory(string sourcePath, string destinationPath) => inner.MoveDirectory(sourcePath, destinationPath);
         public IAsyncEnumerable<string> ReadLinesAsync(string path) => inner.ReadLinesAsync(path);
+        public async Task<byte[]> ReadAllBytesAsync(string path) => await inner.ReadAllBytesAsync(path);
     }
 }

@@ -4,6 +4,8 @@ using ModManager.StarCraft.Services.Log.Interface;
 using ModManager.StarCraft.Services.Log.IO;
 using ModManager.StarCraft.Services.Settings;
 using ModManager.StarCraft.Services.Settings.Interface;
+using ModManager.StarCraft.Utilities;
+using ModManager.StarCraft.Utilities.Interface;
 
 namespace ModManager.StarCraft.Services.UnitTest;
 
@@ -12,15 +14,14 @@ public sealed class LoggerUnitTest : IDisposable
 {
     private readonly Func<string> _originalLogFilePathFactory = Logger.LogFilePathFactory;
     private readonly ISettingsStore _originalSettingsStore = ApplicationSettings.Store;
-    private readonly ModManager.StarCraft.Utilities.Interface.IApplicationDataFileSystem _originalApplicationDataFileSystem =
-        ModManager.StarCraft.Utilities.ApplicationDataHelper.FileSystem;
+    private readonly IFileSystem _originalApplicationDataFileSystem = ApplicationDataHelper.FileSystem;
 
     /// <summary>Configures isolated log-path, settings, and application-data seams.</summary>
     public LoggerUnitTest()
     {
         Logger.LogFilePathFactory = () => "memory";
         ApplicationSettings.Store = new InMemorySettingsStore();
-        ModManager.StarCraft.Utilities.ApplicationDataHelper.FileSystem = new InMemoryApplicationDataFileSystem();
+        ModManager.StarCraft.Utilities.ApplicationDataHelper.FileSystem = new InMemoryFileSystem();
     }
 
     /// <summary>Restores all process-wide seams changed by the fixture.</summary>
@@ -160,12 +161,6 @@ public sealed class LoggerUnitTest : IDisposable
             WrittenPath = path;
             return Task.CompletedTask;
         }
-    }
-
-    private sealed class InMemoryApplicationDataFileSystem : ModManager.StarCraft.Utilities.Interface.IApplicationDataFileSystem
-    {
-        public bool DirectoryExists(string path) => false;
-        public void CreateDirectory(string path) { }
     }
 
     private sealed class TestLogType : ILogType
