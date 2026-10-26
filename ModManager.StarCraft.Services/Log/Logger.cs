@@ -9,14 +9,12 @@ namespace ModManager.StarCraft.Services.Log;
 /// <summary>
 /// Defines the logger class responsible for logging messages with different severity levels and methods.
 /// </summary>
-/// <remarks>
-/// Initializes a new instance of the Logger class with the specified log method. 
-/// The log method determines how log entries will be processed (e.g., written to a file, displayed in the console, or sent as notifications).
-/// </remarks>
-/// <param name="logMethod">The log method to use.</param>
-public class Logger
+/// <param name="logWriter">The writer used for file logging.</param>
+/// <param name="logFilePath">The path passed to the writer.</param>
+/// <param name="logMethods">The methods used to process each entry.</param>
+public class Logger(ILogWriter logWriter, string logFilePath, params LogMethod[] logMethods)
 {
-    private readonly ILogWriter _logWriter;
+    private readonly ILogWriter _logWriter = logWriter;
 
     /// <summary>
     /// Gets or sets the factory used to resolve the default log file path.
@@ -28,12 +26,12 @@ public class Logger
     /// <summary>
     /// Gets the path of the log file used when file logging is enabled.
     /// </summary>
-    public string LogFilePath { get; }
+    public string LogFilePath { get; } = logFilePath;
 
     /// <summary>
     /// Gets or sets the methods used to process log entries.
     /// </summary>
-    public List<LogMethod> LogMethods { get; set; }
+    public List<LogMethod> LogMethods { get; set; } = [.. logMethods];
     #endregion
 
     #region Events
@@ -43,46 +41,25 @@ public class Logger
     public event EventHandler<LogEntry>? LogNotification;
     #endregion
 
-    #region Constructor
+    #region Constructors
     /// <summary>
     /// Default empty constructor.
     /// </summary>
-    public Logger() : this([])
-    {
-    }
+    public Logger() : this([]) {}
 
     /// <summary>
     /// Initializes a new instance of the Logger class with the specified log methods.
     /// This constructor allows for creating a Logger instance that can log messages using multiple methods.
     /// </summary>
     /// <param name="logMethods">The log methods to use.</param>
-    public Logger(params LogMethod[] logMethods)
-        : this(new XmlLogWriter(), LogFilePathFactory(), logMethods)
-    {
-    }
+    public Logger(params LogMethod[] logMethods) : this(new XmlLogWriter(), LogFilePathFactory(), logMethods) {}
 
     /// <summary>
     /// Initializes a new instance of the Logger class with a single log method.
     /// This constructor allows for creating a Logger instance with a specific log method, which will be used for logging messages. 
     /// </summary>
     /// <param name="logMethod">The log method to use.</param>
-    public Logger(LogMethod logMethod)
-        : this([logMethod])
-    {
-    }
-
-    /// <summary>
-    /// Initializes a logger with an explicit writer, path, and processing methods.
-    /// </summary>
-    /// <param name="logWriter">The writer used for file logging.</param>
-    /// <param name="logFilePath">The path passed to the writer.</param>
-    /// <param name="logMethods">The methods used to process each entry.</param>
-    public Logger(ILogWriter logWriter, string logFilePath, params LogMethod[] logMethods)
-    {
-        _logWriter = logWriter;
-        LogFilePath = logFilePath;
-        LogMethods = [.. logMethods];
-    }
+    public Logger(LogMethod logMethod): this([logMethod]) {}
     #endregion
 
     #region Public Methods
