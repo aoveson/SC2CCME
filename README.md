@@ -1,7 +1,22 @@
 # SC2CCME - StarCraft 2 Custom Campaign Manager Extended
 **Maintainer:** Andrew Oveson
 
-![Release Pipeline Status](https://github.com/aoveson/SC2CCME/actions/workflows/release.yml/badge.svg)
+<p align="center">
+  <!-- CI/CD & Testing -->
+  <a href="https://github.com/aoveson/SC2CCME/actions/workflows/release.yml"><img src="https://github.com/aoveson/SC2CCME/actions/workflows/release.yml/badge.svg?branch=main" alt="Release Pipeline"></a>
+  <a href="https://github.com/aoveson/SC2CCME/actions"><img src="https://img.shields.io/badge/tests-60%20passed-success?style=flat-square&logo=dotnet&logoColor=white" alt="Tests Passed"></a>
+  <a href="https://github.com/aoveson/SC2CCME/releases/latest"><img src="https://img.shields.io/github/v/release/aoveson/SC2CCME?style=flat-square&include_prereleases&color=blue" alt="Latest Release"></a>
+  <a href="https://github.com/aoveson/SC2CCME/releases"><img src="https://img.shields.io/github/downloads/aoveson/SC2CCME/total?style=flat-square&color=teal" alt="Total Downloads"></a>
+</p>
+
+<p align="center">
+  <!-- Tech Stack & Platforms -->
+  <img src="https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=.net&logoColor=white" alt=".NET 10">
+  <img src="https://img.shields.io/badge/Avalonia-UI-7B1FA2?style=flat-square&logo=avalonia&logoColor=white" alt="Avalonia UI">
+  <img src="https://img.shields.io/badge/Velopack-Updates-00ACC1?style=flat-square" alt="Velopack">
+  <img src="https://img.shields.io/badge/platforms-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey?style=flat-square&logo=windows&logoColor=blue" alt="Platforms">
+  <a href="https://github.com/aoveson/SC2CCME/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Custom%20%2F%20MIT-blue?style=flat-square" alt="License"></a>
+</p>
 
 ## Purpose
 I play StarCraft II solely on Linux. It's easy enough to add and update mods, but even easier with SC2CCM. Hence, I needed a cross-platform version of SC2CCM. This is a fork of the original repo `7thAce/SC2CCM`. Thanks to **7thAce** for laying the groundwork here.
