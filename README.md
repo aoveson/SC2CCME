@@ -1,5 +1,8 @@
 # SC2CCME - StarCraft 2 Custom Campaign Manager Extended
 **Maintainer:** Andrew Oveson
+
+![Release Pipeline Status](https://github.com/aoveson/SC2CCME/actions/workflows/release.yml/badge.svg)
+
 ## Purpose
 I play StarCraft II solely on Linux. It's easy enough to add and update mods, but even easier with SC2CCM. Hence, I needed a cross-platform version of SC2CCM. This is a fork of the original repo `7thAce/SC2CCM`. Thanks to **7thAce** for laying the groundwork here.
 

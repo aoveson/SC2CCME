@@ -2,6 +2,7 @@
 using ModManager.StarCraft.Services.Updater;
 using System;
 using System.Threading.Tasks;
+using Velopack;
 
 namespace ModManager.StarCraft.Application;
 
@@ -14,7 +15,11 @@ sealed class Program
     public static void Main(string[] args)
     {
         // Initialize velopack
-        VelopackUpdateService.InitializeVelopackUpdateService();
+        // Initializes and runs the Velopack update service. 
+        // This method sets up the necessary components and starts the update process.
+        // This method should be called at the start of the application to ensure that 
+        // the update service is properly initialized.
+        VelopackApp.Build().Run();
 
         // Build avalonia app
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
