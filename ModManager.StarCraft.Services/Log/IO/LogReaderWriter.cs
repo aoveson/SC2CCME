@@ -1,5 +1,7 @@
 using System.Xml.Serialization;
 using ModManager.StarCraft.Services.Settings;
+using ModManager.StarCraft.Utilities;
+using ModManager.StarCraft.Utilities.Interface;
 
 namespace ModManager.StarCraft.Services.Log.IO;
 
@@ -8,6 +10,9 @@ namespace ModManager.StarCraft.Services.Log.IO;
 /// </summary>
 public static class LogReaderWriter
 {
+    #region Properties
+    public static IFileSystem FileSystem {get; set;} = new PhysicalFileSystem();
+    #endregion
     /// <summary>
     /// Writes a log entry to the specified destination file path asynchronously.
     /// </summary>
@@ -49,12 +54,16 @@ public static class LogReaderWriter
         }
         catch(Exception)
         {
-            // Could not read the log, the log file is corrupted, 
-            // lets move it to a backup and make a new one
-            DateTime now = DateTime.Now;
-            string moveTime = $"{now.Month}_{now.Day}_{now.Year}_{now.Hour}{now.Minute}{now.Second}";
-            string newFileName = path.Replace(".xml", $".old.{moveTime}.xml");
-            File.Move(path, newFileName);
+            if(FileSystem.FileExists(path))
+            {
+                // Could not read the log, the log file is corrupted, 
+                // lets move it to a backup and make a new one
+                DateTime now = DateTime.Now;
+                string moveTime = $"{now.Month}_{now.Day}_{now.Year}_{now.Hour}{now.Minute}{now.Second}";
+                string newFileName = path.Replace(".xml", $".old.{moveTime}.xml");
+                FileSystem.MoveFile(path, newFileName);
+                
+            }
 
             return new LogCollection();
         }
@@ -69,9 +78,9 @@ public static class LogReaderWriter
     public static async Task TrimLogAsync(LogCollection collection, string path)
     {
         long maxBytes = ApplicationSettings.QuerySettings(x => x.FileLoggingMaxMegabytes) * 1024L * 1024L;
-        if (File.Exists(path))
+        if (FileSystem.FileExists(path))
         {
-            byte[] logBytes = await File.ReadAllBytesAsync(path);
+            byte[] logBytes = await FileSystem.ReadAllBytesAsync(path);
             if (logBytes.LongLength >= maxBytes)
             {
                 long bytesToRemove = logBytes.LongLength - maxBytes;
