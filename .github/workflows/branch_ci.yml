@@ -177,14 +177,16 @@ jobs:
         if: matrix.platform == 'linux'
         run: bash BuildScripts/build-linux.sh "${{ needs.prepare.outputs.version }}" linux-x64
 
-      - name: Build and Pack App (With Retry)
+      - name: Pacakge macOS (With Retry)
         uses: nick-fields/retry@v3
+        if: matrix.platform == 'macos'
         with:
           timeout_minutes: 12
           max_attempts: 3
           retry_wait_seconds: 30
+          shell: bash
           command: |
-            ./BuildScripts/build-macos.ps1 -Version "${{ needs.prepare.outputs.version }}"
+            ./BuildScripts/build-macos.sh -Version "${{ needs.prepare.outputs.version }}"
 
       - name: Upload Velopack Artifacts for Testing
         uses: actions/upload-artifact@v7

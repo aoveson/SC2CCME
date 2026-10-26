@@ -208,10 +208,16 @@ jobs:
         if: matrix.platform == 'linux'
         run: bash BuildScripts/build-linux.sh "${{ needs.prepare.outputs.version }}" linux-x64
 
-      - name: Package macOS
+      - name: Pacakge macOS (With Retry)
+        uses: nick-fields/retry@v3
         if: matrix.platform == 'macos'
-        shell: bash
-        run: bash BuildScripts/build-macos.sh "${{ needs.prepare.outputs.version }}" "${{ matrix.rid }}"
+        with:
+          timeout_minutes: 12
+          max_attempts: 3
+          retry_wait_seconds: 30
+          shell: bash
+          command: |
+            ./BuildScripts/build-macos.sh -Version "${{ needs.prepare.outputs.version }}"
 
       - name: Upload Velopack Assets for Publishing
         uses: actions/upload-artifact@v7
