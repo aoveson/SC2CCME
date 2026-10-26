@@ -268,7 +268,7 @@ jobs:
 
             release_dir="$RUNNER_TEMP/velopack-releases/velopack-release-$platform-$RELEASE_VERSION"
             if [ -d "$release_dir" ]; then
-              cp -a "$release_dir/. " "$staging_dir/"
+              cp -a "$release_dir/." "$staging_dir/"
             else
               echo "Warning: Directory $release_dir not found."
             fi
