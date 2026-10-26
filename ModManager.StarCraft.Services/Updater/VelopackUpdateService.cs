@@ -41,17 +41,6 @@ public class VelopackUpdateService
     public bool RecentlyUpdated { get; private set; }
     #endregion
 
-    #region Public Static Methods
-    /// <summary>
-    /// Initializes and runs the Velopack update service. 
-    /// This method sets up the necessary components and starts the update process.
-    /// This method should be called at the start of the application to ensure that 
-    /// the update service is properly initialized.
-    /// </summary>
-    public static void InitializeVelopackUpdateService() =>
-        VelopackApp.Build().Run();
-    #endregion
-
     #region Constructors
     /// <summary>
     /// Initializes a new instance of the <see cref="VelopackUpdateService"/> class and updates the application version information if applicable.

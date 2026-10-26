@@ -23,7 +23,7 @@ fi
 
 VPK_VERSION="1.2.161"
 PACK_ID="SC2CCME"
-APP_NAME="SC2CCME"
+APP_NAME="StarCraft 2 Custom Campaign Manager Extended"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPOSITORY_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 PROJECT_PATH="$REPOSITORY_ROOT/ModManager.StarCraft.Application/ModManager.StarCraft.Application.csproj"
