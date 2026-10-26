@@ -178,20 +178,22 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  package:
+  package-matrix:
+    name: Package (${{ matrix.platform }})
     needs: [prepare, unit-tests]
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    if: matrix.platform != 'macos'
     runs-on: ${{ matrix.runner }}
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v7
 
-      - name: Set up .NET 10
+      - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: '10.0.x'
 
       - name: Install Linux AppImage Dependency
         if: matrix.platform == 'linux'
@@ -208,18 +210,7 @@ jobs:
         if: matrix.platform == 'linux'
         run: bash BuildScripts/build-linux.sh "${{ needs.prepare.outputs.version }}" linux-x64
 
-      - name: Pacakge macOS (With Retry)
-        uses: nick-fields/retry@v3
-        if: matrix.platform == 'macos'
-        with:
-          timeout_minutes: 12
-          max_attempts: 3
-          retry_wait_seconds: 30
-          shell: bash
-          command: |
-            ./BuildScripts/build-macos.sh -Version "${{ needs.prepare.outputs.version }}"
-
-      - name: Upload Velopack Assets for Publishing
+      - name: Upload Velopack Artifacts
         uses: actions/upload-artifact@v7
         with:
           name: velopack-release-${{ matrix.platform }}-${{ needs.prepare.outputs.version }}
@@ -227,9 +218,62 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  package-macos-primary:
+    name: Package macOS (Primary - macos-latest)
+    needs: [prepare, unit-tests]
+    if: contains(needs.prepare.outputs.platforms, 'macos')
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Package macOS
+        run: bash BuildScripts/build-macos.sh "${{ needs.prepare.outputs.version }}" osx-arm64
+
+      - name: Upload Velopack Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: velopack-release-macos-${{ needs.prepare.outputs.version }}
+          path: BuildScripts/artifacts/osx-arm64/releases/
+          if-no-files-found: error
+          retention-days: 7
+
+  package-macos-fallback:
+    name: Package macOS (Fallback - macos-14)
+    needs: [prepare, unit-tests, package-macos-primary]
+    if: always() && contains(needs.prepare.outputs.platforms, 'macos') && needs.package-macos-primary.result == 'failure'
+    runs-on: macos-14
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Package macOS
+        run: bash BuildScripts/build-macos.sh "${{ needs.prepare.outputs.version }}" osx-arm64
+
+      - name: Upload Velopack Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: velopack-release-macos-${{ needs.prepare.outputs.version }}
+          path: BuildScripts/artifacts/osx-arm64/releases/
+          if-no-files-found: error
+          retention-days: 7
+
   publish:
     name: Publish
-    needs: [prepare, package, coverage-report]
+    needs: [prepare, package-matrix, package-macos-primary, package-macos-fallback]
+    if: always() && needs.prepare.result == 'success' && (needs.package-matrix.result == 'success' || needs.package-matrix.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - name: Set up .NET 10
