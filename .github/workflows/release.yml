@@ -252,39 +252,44 @@ jobs:
           GH_REPOSITORY: ${{ github.repository }}
           RELEASE_COMMIT: ${{ github.sha }}
         run: |
-          staging_dir="$RUNNER_TEMP/velopack-merged-releases"
-          mkdir -p "$staging_dir"
-
           readarray -t platforms < <(node -e 'for (const p of JSON.parse(process.env.RELEASE_PLATFORMS)) console.log(p)')
-          
-          directives=()
+          total=${#platforms[@]}
+          index=0
+
           for platform in "${platforms[@]}"; do
             case "$platform" in
-              windows) directives+=('[win]') ;;
-              linux) directives+=('[linux]') ;;
-              macos) directives+=('[osx]') ;;
+              windows) directive='[win]' ;;
+              linux) directive='[linux]' ;;
+              macos) directive='[osx]' ;;
               *) echo "Unsupported platform: $platform" >&2; exit 1 ;;
             esac
 
             release_dir="$RUNNER_TEMP/velopack-releases/velopack-release-$platform-$RELEASE_VERSION"
-            if [ -d "$release_dir" ]; then
-              cp -a "$release_dir/." "$staging_dir/"
-            else
-              echo "Warning: Directory $release_dir not found."
+            
+            if [ ! -d "$release_dir" ]; then
+              echo "Error: Directory $release_dir does not exist."
+              exit 1
             fi
+
+            args=("$directive" upload github
+              --repoUrl "https://github.com/$GH_REPOSITORY"
+              --token "$GH_TOKEN"
+              --outputDir "$release_dir"
+              --tag "v$RELEASE_VERSION"
+              --targetCommitish "$RELEASE_COMMIT"
+              --merge)
+
+            # Publish on the final iteration so the release goes live once all assets are uploaded
+            if (( index == total - 1 )); then
+              args+=(--publish)
+            fi
+
+            if [[ "$RELEASE_TYPE" == "prerelease" ]]; then
+              args+=(--pre)
+            fi
+
+            echo "Uploading $platform using directive $directive from $release_dir..."
+            "$RUNNER_TEMP/vpk/vpk" "${args[@]}"
+            
+            index=$((index + 1))
           done
-
-          args=("${directives[@]}" upload github
-            --repoUrl "https://github.com/$GH_REPOSITORY"
-            --token "$GH_TOKEN"
-            --outputDir "$staging_dir"
-            --tag "v$RELEASE_VERSION"
-            --targetCommitish "$RELEASE_COMMIT"
-            --publish)
-
-          if [[ "$RELEASE_TYPE" == "prerelease" ]]; then
-            args+=(--pre)
-          fi
-
-          echo "Running vpk upload with arguments: ${args[*]}"
-          "$RUNNER_TEMP/vpk/vpk" "${args[@]}"
