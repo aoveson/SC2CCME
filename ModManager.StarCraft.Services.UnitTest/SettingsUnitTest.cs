@@ -99,7 +99,7 @@ public sealed class SettingsUnitTest : IDisposable
 
         Assert.True(settings.UseFileLogging);
         Assert.Equal(5, settings.FileLoggingMaxMegabytes);
-        Assert.Equal("v0.0.0.0", settings.ApplicationVersion);
+        Assert.Equal("v0.0.0", settings.ApplicationVersion);
         Assert.False(settings.UsePreReleaseUpdates);
         Assert.Equal("https://github.com/aoveson/SC2CCME", settings.GithubUpdateRepo);
 
