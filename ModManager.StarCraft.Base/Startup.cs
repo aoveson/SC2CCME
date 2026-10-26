@@ -7,7 +7,8 @@ using ModManager.StarCraft.Services.Log.LogTypes;
 using ModManager.StarCraft.Services.Updater;
 using ModManager.StarCraft.Services.Settings;
 using ModManager.StarCraft.Services.Zip;
-using ModManager.StarCraft.Base.Interface;
+using ModManager.StarCraft.Utilities;
+using ModManager.StarCraft.Utilities.Interface;
 
 namespace ModManager.StarCraft.Base;
 
