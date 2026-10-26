@@ -28,7 +28,7 @@ public class ApplicationSettings
 
     #region Const
     [XmlIgnore]
-    public const string SETTINGS_FILE_NAME = "SC2CCM.xml";
+    public const string SETTINGS_FILE_NAME = "SC2CCME.xml";
 
     [XmlIgnore]
     /// <summary>Gets the full path of the application settings file.</summary>
