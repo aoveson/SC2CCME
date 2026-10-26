@@ -249,7 +249,7 @@ jobs:
   package-macos-fallback:
     name: Package macOS (Fallback - macos-14)
     needs: [prepare, unit-tests, package-macos-primary]
-    if: always() && contains(needs.prepare.outputs.platforms, 'macos') && needs.package-macos-primary.result == 'failure'
+    if: always() && contains(needs.prepare.outputs.platforms, 'macos') && (needs.package-macos-primary.result == 'failure' || needs.package-macos-primary.result == 'cancelled')
     runs-on: macos-14
     timeout-minutes: 15
     steps:
