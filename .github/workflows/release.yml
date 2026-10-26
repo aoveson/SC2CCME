@@ -93,7 +93,10 @@ jobs:
             throw new Error('Invalid platforms: You must select at least one platform checkbox.');
           }
 
-          const matrix = selected.map(platform => supported[platform]);
+          // Exclude macOS from the matrix-driven package job since it has its own dedicated jobs
+          const matrixSelected = selected.filter(p => p !== 'macos');
+          const matrix = matrixSelected.map(platform => supported[platform]);
+
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `release_type=${releaseType}\n`);
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `platforms=${JSON.stringify(selected)}\n`);
@@ -184,7 +187,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
-    if: matrix.platform != 'macos'
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout Repository
@@ -329,7 +331,6 @@ jobs:
               --targetCommitish "$RELEASE_COMMIT"
               --merge)
 
-            # Publish on the final iteration so the release goes live once all assets are uploaded
             if (( index == total - 1 )); then
               args+=(--publish)
             fi

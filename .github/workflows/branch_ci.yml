@@ -41,14 +41,12 @@ jobs:
             throw new Error(`BASE_VERSION must be MAJOR.MINOR (e.g., 1.0), got: ${process.env.BASE_VERSION}`);
           }
 
-          // Sanitize branch/tag name for semver pre-release compliance
           const rawRef = process.env.REF_NAME || 'ci';
           const sanitizedRef = rawRef.toLowerCase()
             .replace(/[^a-z0-9]/g, '-')
             .replace(/-+/g, '-')
             .replace(/^-|-$/g, '');
 
-          // Separate build increment format for CI to avoid dirtying main's version line (e.g., 1.0.0-ci.feature-branch.42)
           const version = `${baseVersion}.0-ci.${sanitizedRef}.${process.env.RUN_NUMBER}`;
           const releaseType = 'prerelease';
 
@@ -58,9 +56,9 @@ jobs:
             macos: { platform: 'macos', runner: 'macos-15', rid: 'osx-arm64' },
           };
           
-          // CI builds run across all supported platforms by default
           const selected = Object.keys(supported);
-          const matrix = selected.map(platform => supported[platform]);
+          const matrixSelected = selected.filter(p => p !== 'macos');
+          const matrix = matrixSelected.map(platform => supported[platform]);
 
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `release_type=${releaseType}\n`);
@@ -73,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      checks: write # Required for test-reporter to create check runs / summaries
+      checks: write
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -144,7 +142,7 @@ jobs:
           name: coverage-report-${{ github.run_id }}
           path: ${{ runner.temp }}/CoverageReport/
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 14
 
   package-matrix:
     name: Package (${{ matrix.platform }})
@@ -152,7 +150,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
-    if: matrix.platform != 'macos'
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout Repository
