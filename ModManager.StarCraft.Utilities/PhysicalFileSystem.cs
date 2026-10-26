@@ -1,9 +1,11 @@
-namespace ModManager.StarCraft.Base;
+using ModManager.StarCraft.Utilities.Interface;
+
+namespace ModManager.StarCraft.Utilities;
 
 /// <summary>
 /// Performs filesystem operations against the host operating system.
 /// </summary>
-public sealed class PhysicalFileSystem : Interface.IFileSystem
+public sealed class PhysicalFileSystem : IFileSystem
 {
     /// <inheritdoc />
     public string[] GetFiles(string path, string searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly) =>
@@ -29,4 +31,7 @@ public sealed class PhysicalFileSystem : Interface.IFileSystem
     public void MoveDirectory(string sourcePath, string destinationPath) => Directory.Move(sourcePath, destinationPath);
     /// <inheritdoc />
     public IAsyncEnumerable<string> ReadLinesAsync(string path) => File.ReadLinesAsync(path);
+    
+    /// <inheritdoc />
+    public async Task<byte[]> ReadAllBytesAsync(string path) => await File.ReadAllBytesAsync(path);
 }
