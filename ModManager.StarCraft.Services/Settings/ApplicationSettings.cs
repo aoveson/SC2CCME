@@ -99,7 +99,7 @@ public class ApplicationSettings
             }
         }
     }
-    private string _applicationVersion = "v0.0.0.0";
+    private string _applicationVersion = "v0.0.0";
 
     /// <summary>Gets or sets whether pre-release updates are accepted.</summary>
     [XmlElement]
