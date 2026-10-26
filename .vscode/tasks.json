@@ -1,0 +1,78 @@
+{
+	"version": "2.0.0",
+	"inputs": [
+		{
+			"id": "configuration",
+			"type": "pickString",
+			"description": "Select Configuration",
+			"options": ["Debug", "Release"],
+			"default": "Debug"
+		}
+	],
+	"tasks": [
+		{
+			"label": "Build Application",
+			"type": "process",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"${workspaceFolder}/ModManager.StarCraft.Application/ModManager.StarCraft.Application.csproj",
+				"--configuration",
+				"${input:configuration}"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "Clean Solution",
+			"type": "process",
+			"command": "dotnet",
+			"args": [
+				"clean",
+				"${workspaceFolder}/SC2CCME.slnx",
+				"--configuration",
+				"${input:configuration}"
+			],
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "Build Solution",
+			"type": "process",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"${workspaceFolder}/SC2CCME.slnx",
+				"--configuration",
+				"${input:configuration}"
+			],
+			"group": "build",
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "Rebuild Solution",
+			"dependsOn": [
+				"Clean Solution",
+				"Build Solution"
+			],
+			"dependsOrder": "sequence",
+			"group": "build",
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "Run Unit Tests",
+			"type": "process",
+			"command": "dotnet",
+			"args": [
+				"test",
+				"${workspaceFolder}/SC2CCME.slnx",
+				"--configuration",
+				"Debug"
+			],
+			"group": "test",
+			"problemMatcher": "$msCompile"
+		}
+	]
+}

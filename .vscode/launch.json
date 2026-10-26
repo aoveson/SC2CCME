@@ -1,0 +1,16 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch SC2CCME",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "Build Application",
+			"program": "${workspaceFolder}/ModManager.StarCraft.Application/bin/Debug/net10.0/StarCraft 2 Custom Campaign Manager Extended.dll",
+			"args": [],
+			"cwd": "${workspaceFolder}",
+			"console": "internalConsole",
+			"stopAtEntry": false
+		}
+	]
+}

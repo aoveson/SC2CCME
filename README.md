@@ -1,3 +1,41 @@
+# SC2CCME - StarCraft 2 Custom Campaign Manager Extended
+**Maintainer:** Andrew Oveson
+## Purpose
+I play StarCraft II solely on Linux. It's easy enough to add and update mods, but even easier with SC2CCM. Hence, I needed a cross-platform version of SC2CCM. This is a fork of the original repo `7thAce/SC2CCM`. Thanks to **7thAce** for laying the groundwork here.
+
+SC2CCME is a rewrite from the original .NET Framework application, which was Windows-only, to modern .NET 10. It is designed for Linux and macOS workflows while remaining usable on Windows.
+
+The application provides a graphical user interface powered by Avalonia, so the same workflow can be used across supported desktop platforms.
+
+![SC2CCME Floating on CachyOS with Hyprland](img/SC2CCME_Floating.png)
+
+![SC2CCME Tiled on CachyOS with Hyprland](img/SC2CCME_Tiled.png)
+
+## Notes:
+- I do not have a system with macOS. Because of this, packages for macOS are not signed or tested. macOS workflows are also not well-established. If anyone in the StarCraft II modding community plays on a Mac, please create issues for problems you see and let me know the pathing for your default install locations.
+- **Signing**: The packages produced here are **unsigned**. These packages will produce Windows SmartScreen warnings. If you are worried about potential viruses, feel free to run a VirusTotal scan on the package and inspect the code as you see fit.
+- This project is developed solely on Linux, CachyOS, with Hyprland. Please open issues for items you have problems with.
+- I have not directly tested every interaction I could make with this software. Unit tests hopefully cover this gap a little bit, but bugs do occur.
+- **Contributions are welcome through a standard pull request**.
+
+## What is different from the original SC2CCM?
+
+SC2CCME keeps the original campaign and mod-management workflow, but updates the surrounding application:
+
+- **Cross-platform desktop support:** The original application targeted Windows and .NET Framework 4.8. SC2CCME targets modern .NET and uses Avalonia for Linux, macOS, and Windows desktop support.
+- **A maintained graphical workflow:** Mod discovery, importing, activation, deletion, and campaign restoration are available through the application UI rather than depending on Windows-specific UI technology or manual file management.
+- **Modular application services:** Logging, settings, ZIP handling, campaign management, and updating are separated into reusable projects, making the code easier to extend and test.
+- **Cross-platform StarCraft II discovery:** Startup checks account for platform-specific installation locations, including common Linux Steam compatibility paths.
+- **Modern packaging and updates:** The project includes platform-specific build scripts and uses Velopack for application update support.
+
+The original project remains the source of the core campaign-management idea and metadata-based mod layout. SC2CCME is focused on making that workflow practical outside Windows and easier to maintain.
+
+In the future, I would also like to add a manifest file that contains links to directly download and update mods. This would need security and verification measures in place.
+
+## Original SC2CCM README (7thAce/SC2CCM)
+
+> as of 10/17/2026
+
 # Download
 Somehow, people keep finding this through github and not the 100k person Discord, so I'll leave info here.
 
@@ -6,7 +44,6 @@ https://discord.gg/UCDyZyr6gg
 Go to #getting-started and download.
 
 # SC2CCM
-StarCraft 2 Custom Campaign Manager
 
 Starting with the test version of 1.03, the SC2CCM will be open source.
 This code is decent.  A lot of similar ideas were not pushed into functions (stuff that repeats for each campaign) due to having to carry around the tags/paths/etc. for each campaign.  

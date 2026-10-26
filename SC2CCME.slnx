@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="ModManager.StarCraft.Application.UnitTest/ModManager.StarCraft.Application.UnitTest.csproj" />
+  <Project Path="ModManager.StarCraft.Application/ModManager.StarCraft.Application.csproj" />
+  <Project Path="ModManager.StarCraft.Base.UnitTest/ModManager.StarCraft.Base.UnitTest.csproj" />
+  <Project Path="ModManager.StarCraft.Base/ModManager.StarCraft.Base.csproj" />
+  <Project Path="ModManager.StarCraft.Services.UnitTest/ModManager.StarCraft.Services.UnitTest.csproj" />
+  <Project Path="ModManager.StarCraft.Services/ModManager.StarCraft.Services.csproj" />
+  <Project Path="ModManager.StarCraft.Utilities/ModManager.StarCraft.Utilities.csproj" />
+  <Project Path="ModManager.StarCraft.Utilities.UnitTest/ModManager.StarCraft.Utilities.UnitTest.csproj" />
+</Solution>

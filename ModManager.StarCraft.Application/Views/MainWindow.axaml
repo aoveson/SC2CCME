@@ -1,0 +1,429 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ModManager.StarCraft.Application.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Xaml.Behaviors.Interactivity"
+        xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Xaml.Behaviors.Interactions"   
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ModManager.StarCraft.Application.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Width="950"
+        MinWidth="950"
+        Height="600"
+        MinHeight="600"
+        Icon="/Assets/application_icon.ico"
+        Title="{Binding AppVersion, StringFormat='StarCraft II Custom Campaign Manager {0}'}">
+
+    <i:Interaction.Behaviors>
+        <ia:EventTriggerBehavior EventName="Loaded">
+            <ia:InvokeCommandAction Command="{Binding WindowLoaded}" />
+        </ia:EventTriggerBehavior>
+    </i:Interaction.Behaviors>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <SolidColorBrush Color="#8080ff" x:Key="WingsOfLibertyColor" />
+            <SolidColorBrush Color="#DD96FF" x:Key="HeartOfTheSwarmColor" />
+            <SolidColorBrush Color="#FFFF80" x:Key="LegacyOfTheVoidColor" />
+            <SolidColorBrush Color="#80ff80" x:Key="NovaCovertOpsColor" />
+        </ResourceDictionary>
+    </Window.Resources>
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*" />
+            <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <!-- WINGS OF LIBERTY SECTION-->
+            <GroupBox Header="Wings of Liberty" 
+                      Grid.Column="0" 
+                      Margin="5">
+                <StackPanel Margin="2">
+                    <Grid>
+                        <TextBlock Text="Active Mod"
+                                   TextAlignment="Center" />
+                        <Image Source="/Assets/warning.png"
+                               Width="20"
+                               Height="19"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Margin="5,0,0,0"
+                               IsVisible="{Binding ShowWingsOfLibertyWarning}"
+                               ToolTip.Tip="Warning: Active campaign may have missing or inconsistent files. This usually happens when changing campaigns while in a mission or menu. Exit to the SC2 menu and set an active mod to clear this." />
+                    </Grid>
+                    <TextBox Text="{Binding WingsOfLibertyActiveModTitle, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource WingsOfLibertyColor}"
+                             Foreground="Black"  
+                             IsReadOnly="True" />
+                    <TextBlock Text="Author"
+                               TextAlignment="Center"
+                               Margin="0 10 0 0" />
+                    <TextBox Text="{Binding WingsOfLibertyActiveModAuthor, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource WingsOfLibertyColor}"
+                             Foreground="Black" 
+                             IsReadOnly="True" />
+                    <TextBlock Text="Version"
+                               TextAlignment="Center" 
+                               Margin="0 10 0 0" />
+                    <TextBox Text="{Binding WingsOfLibertyActiveModVersion, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource WingsOfLibertyColor}"
+                             Foreground="Black" 
+                             IsReadOnly="True" 
+                             Margin="40 0" />
+                    
+                    <TextBlock Text="Select WoL Mod"
+                               TextAlignment="Center"
+                               Margin="0 20 0 0" />
+                    <ComboBox ItemsSource="{Binding WingsOfLibertyModList, Mode=TwoWay}"
+                              SelectedItem="{Binding WingsOfLibertyModListSelectedItem, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch"
+                              Margin="10 5 10 10">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Title}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Command="{Binding WingsOfLibertySetActiveCampaign}"
+                            IsEnabled="{Binding WingsOfLibertyButtonsEnabled}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Set to Active Campaign"
+                                   TextAlignment="Center"/>
+                    </Button>
+                    <Button Command="{Binding WingsOfLibertyDeleteModFiles}"
+                            IsEnabled="{Binding WingsOfLibertyButtonsEnabled}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Delete Mod Files"
+                                   TextAlignment="Center"/>
+                    </Button>
+                    <Button Command="{Binding WingsOfLibertyRestoreToUnmodified}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Restore to Unmodified"
+                                   TextAlignment="Center"/>
+                    </Button>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- HEART OF THE SWARM SECTION-->
+            <GroupBox Header="Heart of the Swarm" 
+                      Grid.Column="1" 
+                      Margin="5">
+                <StackPanel Margin="2">
+                    <Grid>
+                        <TextBlock Text="Active Mod"
+                                   TextAlignment="Center" />
+                        <Image Source="/Assets/warning.png"
+                               Width="20"
+                               Height="19"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Margin="5,0,0,0"
+                               IsVisible="{Binding ShowHeartOfTheSwarmWarning}"
+                               ToolTip.Tip="Warning: Active campaign may have missing or inconsistent files. This usually happens when changing campaigns while in a mission or menu. Exit to the SC2 menu and set an active mod to clear this." />
+                    </Grid>
+                    <TextBox Text="{Binding HeartOfTheSwarmActiveModTitle, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource HeartOfTheSwarmColor}"
+                             Foreground="Black"  
+                             IsReadOnly="True" />
+                    <TextBlock Text="Author"
+                               TextAlignment="Center"
+                               Margin="0 10 0 0" />
+                    <TextBox Text="{Binding HeartOfTheSwarmActiveModAuthor, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource HeartOfTheSwarmColor}"
+                             Foreground="Black"  
+                             IsReadOnly="True" />
+                    <TextBlock Text="Version"
+                               TextAlignment="Center" 
+                               Margin="0 10 0 0" />
+                    <TextBox Text="{Binding HeartOfTheSwarmActiveModVersion, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource HeartOfTheSwarmColor}"
+                             Foreground="Black"  
+                             IsReadOnly="True" 
+                             Margin="40 0" />
+                    
+                    <TextBlock Text="Select HotS Mod"
+                               TextAlignment="Center"
+                               Margin="0 20 0 0" />
+                    <ComboBox ItemsSource="{Binding HeartOfTheSwarmModList, Mode=TwoWay}"
+                              SelectedItem="{Binding HeartOfTheSwarmModListSelectedItem, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch"
+                              Margin="10 5 10 10">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Title}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Command="{Binding HeartOfTheSwarmSetActiveCampaign}"
+                            IsEnabled="{Binding HeartOfTheSwarmButtonsEnabled}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Set to Active Campaign"
+                                   TextAlignment="Center"/>
+                    </Button>
+                    <Button Command="{Binding HeartOfTheSwarmDeleteModFiles}"
+                            IsEnabled="{Binding HeartOfTheSwarmButtonsEnabled}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Delete Mod Files"
+                                   TextAlignment="Center"/>
+                    </Button>
+                    <Button Command="{Binding HeartOfTheSwarmRestoreToUnmodified}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Restore to Unmodified"
+                                   TextAlignment="Center"/>
+                    </Button>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- LEGACY OF THE VOID SECTION-->
+            <GroupBox Header="Legacy of the Void" 
+                      Grid.Column="2" 
+                      Margin="5">
+                <StackPanel Margin="2">
+                    <Grid>
+                        <TextBlock Text="Active Mod"
+                                   TextAlignment="Center" />
+                        <Image Source="/Assets/warning.png"
+                               Width="20"
+                               Height="19"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Margin="5,0,0,0"
+                               IsVisible="{Binding ShowLegacyOfTheVoidWarning}"
+                               ToolTip.Tip="Warning: Active campaign may have missing or inconsistent files. This usually happens when changing campaigns while in a mission or menu. Exit to the SC2 menu and set an active mod to clear this." />
+                    </Grid>
+                    <TextBox Text="{Binding LegacyOfTheVoidActiveModTitle, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource LegacyOfTheVoidColor}"
+                             Foreground="Black"  
+                             IsReadOnly="True" />
+                    <TextBlock Text="Author"
+                               TextAlignment="Center"
+                               Margin="0 10 0 0" />
+                    <TextBox Text="{Binding LegacyOfTheVoidActiveModAuthor, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource LegacyOfTheVoidColor}" 
+                             Foreground="Black" 
+                             IsReadOnly="True" />
+                    <TextBlock Text="Version"
+                               TextAlignment="Center" 
+                               Margin="0 10 0 0" />
+                    <TextBox Text="{Binding WingsOfLibertyActiveModVersion, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource LegacyOfTheVoidColor}" 
+                             Foreground="Black" 
+                             IsReadOnly="True" 
+                             Margin="40 0" />
+                    
+                    <TextBlock Text="Select LotV Mod"
+                               TextAlignment="Center"
+                               Margin="0 20 0 0" />
+                    <ComboBox ItemsSource="{Binding LegacyOfTheVoidModList, Mode=TwoWay}"
+                              SelectedItem="{Binding LegacyOfTheVoidModListSelectedItem, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch"
+                              Margin="10 5 10 10">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Title}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Command="{Binding LegacyOfTheVoidSetActiveCampaign}"
+                            IsEnabled="{Binding LegacyOfTheVoidButtonsEnabled}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Set to Active Campaign"
+                                   TextAlignment="Center"/>
+                    </Button>
+                    <Button Command="{Binding LegacyOfTheVoidDeleteModFiles}"
+                            IsEnabled="{Binding LegacyOfTheVoidButtonsEnabled}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Delete Mod Files"
+                                   TextAlignment="Center"/>
+                    </Button>
+                    <Button Command="{Binding LegacyOfTheVoidRestoreToUnmodified}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Restore to Unmodified"
+                                   TextAlignment="Center"/>
+                    </Button>
+                </StackPanel>
+            </GroupBox>
+
+            <!-- NOVA COVERT OPS SECTION-->
+            <GroupBox Header="Nova Covert Ops" 
+                      Grid.Column="3" 
+                      Margin="5">
+                <StackPanel Margin="2">
+                    <Grid>
+                        <TextBlock Text="Active Mod"
+                                   TextAlignment="Center" />
+                        <Image Source="/Assets/warning.png"
+                               Width="20"
+                               Height="19"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Margin="5,0,0,0"
+                               IsVisible="{Binding ShowNovaCovertOpsWarning}"
+                               ToolTip.Tip="Warning: Active campaign may have missing or inconsistent files. This usually happens when changing campaigns while in a mission or menu. Exit to the SC2 menu and set an active mod to clear this." />
+                    </Grid>
+                    <TextBox Text="{Binding NovaCovertOpsActiveModTitle, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource NovaCovertOpsColor}" 
+                             Foreground="Black" 
+                             IsReadOnly="True" />
+                    <TextBlock Text="Author"
+                               TextAlignment="Center"
+                               Margin="0 10 0 0" />
+                    <TextBox Text="{Binding NovaCovertOpsActiveModAuthor, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource NovaCovertOpsColor}" 
+                             Foreground="Black" 
+                             IsReadOnly="True" />
+                    <TextBlock Text="Version"
+                               TextAlignment="Center" 
+                               Margin="0 10 0 0" />
+                    <TextBox Text="{Binding NovaCovertOpsActiveModVersion, Mode=OneWay}"
+                             TextAlignment="Center" 
+                             Background="{StaticResource NovaCovertOpsColor}" 
+                             Foreground="Black" 
+                             IsReadOnly="True" 
+                             Margin="40 0" />
+                    
+                    <TextBlock Text="Select NCO Mod"
+                               TextAlignment="Center"
+                               Margin="0 20 0 0" />
+                    <ComboBox ItemsSource="{Binding NovaCovertOpsModList, Mode=TwoWay}"
+                              SelectedItem="{Binding NovaCovertOpsModListSelectedItem, Mode=TwoWay}"
+                              HorizontalAlignment="Stretch"
+                              Margin="10 5 10 10">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Title}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Command="{Binding NovaCovertOpsSetActiveCampaign}"
+                            IsEnabled="{Binding NovaCovertOpsButtonsEnabled}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Set to Active Campaign"
+                                   TextAlignment="Center"/>
+                    </Button>
+                    <Button Command="{Binding NovaCovertOpsDeleteModFiles}"
+                            IsEnabled="{Binding NovaCovertOpsButtonsEnabled}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Delete Mod Files"
+                                   TextAlignment="Center"/>
+                    </Button>
+                    <Button Command="{Binding NovaCovertOpsRestoreToUnmodified}"
+                            Margin="10 5"
+                            HorizontalAlignment="Stretch">
+                        <TextBlock Text="Restore to Unmodified"
+                                   TextAlignment="Center"/>
+                    </Button>
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+        <Grid Grid.Row="1" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0"
+                  DragDrop.AllowDrop="True">
+                <i:Interaction.Behaviors>
+                    <ia:EventTriggerBehavior EventName="DragOver">
+                        <ia:InvokeCommandAction Command="{Binding CampaignZipDragOver}"
+                                                PassEventArgsToCommand="True" />
+                    </ia:EventTriggerBehavior>
+                    <ia:EventTriggerBehavior EventName="Drop">
+                        <ia:InvokeCommandAction Command="{Binding CampaignZipDrop}"
+                                                PassEventArgsToCommand="True" />
+                    </ia:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+                <Rectangle Stroke="Gray"
+                           StrokeDashArray="5,5"
+                           StrokeThickness="2"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch"
+                           Margin="5,0" />
+                <Image Source="/Assets/drag-import.png"
+                       Stretch="Uniform"
+                       Width="40"
+                       Height="40"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+                <TextBlock Text="Drag and Drop Campaign Zip Here!"
+                           TextAlignment="Center"
+                           VerticalAlignment="Bottom"
+                           Margin="0 0 0 5" />
+            </Grid>
+            <TextBox Text="{Binding Log, Mode=OneWay}"
+                     IsReadOnly="True"
+                     Grid.Column="1" 
+                     Margin="2 0"
+                     TextWrapping="Wrap" />
+            <Button Grid.Column="2"
+                    Command="{Binding SelectSc2}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Margin="2 0">
+                <TextBlock TextAlignment="Center"
+                           VerticalAlignment="Center">
+                    <Run Text="Select" />
+                    <LineBreak />
+                    <Run Text="SC2.exe" />
+                </TextBlock>
+            </Button>
+            
+            <Button Grid.Column="3"
+                    Command="{Binding SelectZipToImport}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Margin="2 0">
+                <TextBlock TextAlignment="Center"
+                           VerticalAlignment="Center">
+                    <Run Text="Select" />
+                    <LineBreak />
+                    <Run Text="Zip to" />
+                    <LineBreak />
+                    <Run Text="Import" />
+                </TextBlock>
+            </Button>
+            
+        </Grid>
+    </Grid>
+
+</Window>
