@@ -1,11 +1,22 @@
 # SC2CCME - StarCraft 2 Custom Campaign Manager Extended
 **Maintainer:** Andrew Oveson
-# Purpose
+## Purpose
 I play StarCraft II solely on Linux. It's easy enough to add and update mods, but even easier with SC2CCM. Hence, I needed a cross-platform version of SC2CCM. This is a fork of the original repo `7thAce/SC2CCM`. Thanks to **7thAce** for laying the groundwork here.
 
 SC2CCME is a rewrite from the original .NET Framework application, which was Windows-only, to modern .NET 10. It is designed for Linux and macOS workflows while remaining usable on Windows.
 
 The application provides a graphical user interface powered by Avalonia, so the same workflow can be used across supported desktop platforms.
+
+![SC2CCME Floating on CachyOS with Hyprland](img/SC2CCME_Floating.png)
+
+![SC2CCME Tiled on CachyOS with Hyprland](img/SC2CCME_Tiled.png)
+
+## Notes:
+- I do not have a system with macOS. Because of this, packages for macOS are not signed or tested. macOS workflows are also not well-established. If anyone in the StarCraft II modding community plays on a Mac, please create issues for problems you see and let me know the pathing for your default install locations.
+- **Signing**: The packages produced here are **unsigned**. These packages will produce Windows SmartScreen warnings. If you are worried about potential viruses, feel free to run a VirusTotal scan on the package and inspect the code as you see fit.
+- This project is developed solely on Linux, CachyOS, with Hyprland. Please open issues for items you have problems with.
+- I have not directly tested every interaction I could make with this software. Unit tests hopefully cover this gap a little bit, but bugs do occur.
+- **Contributions are welcome through a standard pull request**.
 
 ## What is different from the original SC2CCM?
 
