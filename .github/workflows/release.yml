@@ -52,8 +52,8 @@ jobs:
           const fs = require('node:fs');
 
           const baseVersion = process.env.BASE_VERSION.replace(/^[vV]/, '');
-          if (!/^\d+\.\d+\.\d+$/.test(baseVersion)) {
-            throw new Error(`BASE_VERSION must be MAJOR.MINOR.PATCH, got: ${process.env.BASE_VERSION}`);
+          if (!/^\d+\.\d+$/.test(baseVersion)) {
+            throw new Error(`BASE_VERSION must be MAJOR.MINOR (e.g., 1.0), got: ${process.env.BASE_VERSION}`);
           }
           const version = `${baseVersion}.${process.env.RUN_NUMBER}`;
           const releaseType = process.env.EVENT_NAME === 'push'
