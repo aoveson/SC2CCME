@@ -310,9 +310,9 @@ jobs:
 
           for platform in "${platforms[@]}"; do
             case "$platform" in
-              windows) directive='[win]' ;;
-              linux) directive='[linux]' ;;
-              macos) directive='[osx]' ;;
+              windows) channel='win' ;;
+              linux) channel='linux' ;;
+              macos) channel='osx' ;;
               *) echo "Unsupported platform: $platform" >&2; exit 1 ;;
             esac
 
@@ -323,14 +323,16 @@ jobs:
               exit 1
             fi
 
-            args=("$directive" upload github
+            args=(upload github
               --repoUrl "https://github.com/$GH_REPOSITORY"
               --token "$GH_TOKEN"
               --outputDir "$release_dir"
+              --channel "$channel"
               --tag "v$RELEASE_VERSION"
               --targetCommitish "$RELEASE_COMMIT"
               --merge)
 
+            # Publish on the final iteration so the release goes live once all assets are uploaded
             if (( index == total - 1 )); then
               args+=(--publish)
             fi
@@ -339,7 +341,7 @@ jobs:
               args+=(--pre)
             fi
 
-            echo "Uploading $platform using directive $directive from $release_dir..."
+            echo "Uploading $platform package from $release_dir with channel $channel..."
             "$RUNNER_TEMP/vpk/vpk" "${args[@]}"
             
             index=$((index + 1))
