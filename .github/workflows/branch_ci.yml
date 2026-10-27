@@ -1,4 +1,5 @@
 name: CI Build and Package
+run-name: SC2CCME_CI_${{ github.ref_name }}_${{ github.run_number }}
 
 on:
   push:
