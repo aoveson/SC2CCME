@@ -1,6 +1,6 @@
-namespace ModManager.StarCraft.Utilities;
+using ModManager.StarCraft.Utilities.Interface;
 
-using Interface;
+namespace ModManager.StarCraft.Utilities;
 
 public static class ApplicationDataHelper
 {
