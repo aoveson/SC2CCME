@@ -34,4 +34,7 @@ public sealed class PhysicalFileSystem : IFileSystem
     
     /// <inheritdoc />
     public async Task<byte[]> ReadAllBytesAsync(string path) => await File.ReadAllBytesAsync(path);
+
+    /// <inheritdoc />
+    public async Task WriteAllTextAsync(string path, string text) => await File.WriteAllTextAsync(path, text);
 }

@@ -143,4 +143,9 @@ internal sealed class InMemoryFileSystem : IFileSystem
     }
 
     public async Task<byte[]> ReadAllBytesAsync(string path) => await Task.Run(() => ReadText(path).Select(x => (byte)x).ToArray());
+    
+    public Task WriteAllTextAsync(string path, string text)
+    {
+        throw new NotImplementedException();
+    } 
 }

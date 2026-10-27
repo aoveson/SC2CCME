@@ -106,5 +106,10 @@ public sealed class ApplicationDataHelperUnitTest
         {
             throw new NotImplementedException();
         }
+
+        public Task WriteAllTextAsync(string path, string text)
+        {
+            throw new NotImplementedException();
+        } 
     }
 }

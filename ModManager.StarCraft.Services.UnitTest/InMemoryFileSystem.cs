@@ -56,4 +56,9 @@ public class InMemoryFileSystem : IFileSystem
     {
         throw new NotImplementedException();
     }
+
+    public Task WriteAllTextAsync(string path, string text)
+    {
+        throw new NotImplementedException();
+    } 
 }

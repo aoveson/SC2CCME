@@ -97,5 +97,9 @@ public sealed class StartupUnitTest : IDisposable
         public void MoveDirectory(string sourcePath, string destinationPath) => inner.MoveDirectory(sourcePath, destinationPath);
         public IAsyncEnumerable<string> ReadLinesAsync(string path) => inner.ReadLinesAsync(path);
         public async Task<byte[]> ReadAllBytesAsync(string path) => await inner.ReadAllBytesAsync(path);
+        public Task WriteAllTextAsync(string path, string text)
+        {
+            throw new NotImplementedException();
+        } 
     }
 }
