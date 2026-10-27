@@ -149,22 +149,6 @@ public class ApplicationSettings
     }
     private UpdateSourceOption _updateSource = UpdateSourceOption.Github;
 
-    /// <summary>Gets or sets whether an update is waiting to be applied.</summary>
-    [XmlElement]
-    public bool PendingUpdate
-    {
-        get => _pendingUpdate;
-        set
-        {
-            if(_pendingUpdate != value)
-            {
-                _pendingUpdate = value;
-                _settingsUpdated = true;
-            }
-        }
-    }
-    private bool _pendingUpdate;
-
     /// <summary>Gets or sets the web endpoint used for updates.</summary>
     [XmlElement]
     public string WebUpdateSourceUri
