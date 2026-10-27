@@ -29,6 +29,20 @@ The application provides a graphical user interface powered by Avalonia, so the 
 
 ![SC2CCME Tiled on CachyOS with Hyprland](img/SC2CCME_Tiled.png)
 
+## Installation
+
+Download the appropriate installer for your operating system from the **[Latest Release](../../releases/latest)** page:
+
+* **Windows:** Download `SC2CCME-win-Setup.exe` and run it to install. *(Or use `SC2CCME-win-Portable.zip` for a portable version).*
+* **macOS:** Download `SC2CCME-osx-Setup.pkg` and follow the setup wizard.
+* **Linux:** Download `SC2CCME.AppImage`, make it executable, and run it:
+```bash
+chmod +x SC2CCME.AppImage
+./SC2CCME.AppImage
+```
+
+All other packages within the release are used for automatic updating and do not need to be manually downloaded for use.
+
 ## Notes:
 - I do not have a system with macOS. Because of this, packages for macOS are not signed or tested. macOS workflows are also not well-established. If anyone in the StarCraft II modding community plays on a Mac, please create issues for problems you see and let me know the pathing for your default install locations.
 - **Signing**: The packages produced here are **unsigned**. These packages will produce Windows SmartScreen warnings. If you are worried about potential viruses, feel free to run a VirusTotal scan on the package and inspect the code as you see fit.
