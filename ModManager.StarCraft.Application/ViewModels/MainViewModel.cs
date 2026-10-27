@@ -23,7 +23,6 @@ using ModManager.StarCraft.Utilities;
 using System.Linq;
 using Avalonia.Input;
 
-
 namespace ModManager.StarCraft.Application.ViewModels;
 
 /// <summary>
@@ -154,6 +153,25 @@ public partial class MainViewModel: ViewModelBase
     }
     public string _log = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the download progress percent
+    /// </summary>
+    public int DownloadProgress
+    {
+        get => _downloadProgress;
+        private set => this.Set(ref _downloadProgress, value);
+    }
+    private int _downloadProgress;
+
+    /// <summary>
+    /// Gets or sets whether to obsfucate the rest of the window and show the download progress bar
+    /// </summary>
+    public bool ShowDownloadProgress
+    {
+        get => _showDownloadProgress;
+        private set => this.Set(ref _showDownloadProgress, value);
+    }
+    private bool _showDownloadProgress;
     #region Wings of Liberty
     /// <summary>
     /// Gets the currently active Wings of Liberty mod.
@@ -808,7 +826,8 @@ public partial class MainViewModel: ViewModelBase
             {
                 try
                 {
-                    await Service.Get<VelopackUpdateService>().ApplyUpdateAsync(e.Update);
+                    ShowDownloadProgress = true;
+                    await Service.Get<VelopackUpdateService>().ApplyUpdateAsync(e.Update, OnUpdateProgress);
                 }
                 catch(Exception ex)
                 {
@@ -820,6 +839,10 @@ public partial class MainViewModel: ViewModelBase
                     ).ShowAsync();
 
                     App.ShutdownApplication();
+                }
+                finally
+                {
+                    ShowDownloadProgress = false;
                 }
             }
         }
@@ -945,5 +968,7 @@ public partial class MainViewModel: ViewModelBase
         LegacyOfTheVoidModListSelectedItem = LegacyOfTheVoidModList?.FirstOrDefault(x => x.Title == LegacyOfTheVoidActiveMod?.Title);
         NovaCovertOpsModListSelectedItem = NovaCovertOpsModList?.FirstOrDefault(x => x.Title == NovaCovertOpsActiveMod?.Title);
     }
+
+    private void OnUpdateProgress(int progress) => DownloadProgress = progress; 
     #endregion
 }
