@@ -7,6 +7,10 @@ using ModManager.StarCraft.Services.Log.LogTypes;
 using Velopack.Locators;
 using ModManager.StarCraft.Services.Updater.Enum;
 using Velopack.Logging;
+using System.Runtime.InteropServices;
+using System.Text;
+using ModManager.StarCraft.Utilities;
+using ModManager.StarCraft.Utilities.Interface;
 
 namespace ModManager.StarCraft.Services.Updater;
 
@@ -39,6 +43,8 @@ public class VelopackUpdateService
     /// Indicates whether the application was recently updated.
     /// </summary>
     public bool RecentlyUpdated { get; private set; }
+
+    public IFileSystem FileSystem { get; set; } = new PhysicalFileSystem();
     #endregion
 
     #region Constructors
@@ -155,18 +161,37 @@ public class VelopackUpdateService
     /// Applies the specified update and optionally restarts the application.
     /// </summary>
     /// <param name="result">The update result to apply.</param>
-    public void ApplyUpdate(UpdateResult? result)
+    public async Task ApplyUpdateAsync(UpdateResult? result)
     {
         if (result != null && !_updatesDisabled)
         {
-            ApplicationSettings.QuerySettings(x => x.PendingUpdate = true);
             try
             {
                 _manager!.ApplyUpdatesAndRestart(result.Info);
             }
-            catch
+            catch (Exception e)
             {
-                ApplicationSettings.QuerySettings(x => x.PendingUpdate = false);
+                var diagnosticInfo = new StringBuilder();
+                diagnosticInfo.AppendLine($"=== SC2CCME Update Failure Report ===");
+                diagnosticInfo.AppendLine($"Timestamp: {DateTime.UtcNow:O}");
+                diagnosticInfo.AppendLine($"Current Version: {ApplicationSettings.QuerySettings(x => x.ApplicationVersion)}");
+                diagnosticInfo.AppendLine($"Target Version: {result.NewVersion.Version}");
+                diagnosticInfo.AppendLine($"OS: {Environment.OSVersion} ({RuntimeInformation.OSArchitecture})");
+                diagnosticInfo.AppendLine($"Process Architecture: {RuntimeInformation.ProcessArchitecture}");
+                diagnosticInfo.AppendLine($".NET Runtime: {Environment.Version}");
+                diagnosticInfo.AppendLine($"Base Directory: {AppContext.BaseDirectory}");
+                diagnosticInfo.AppendLine();
+                diagnosticInfo.AppendLine("--- Exception Details ---");
+                diagnosticInfo.AppendLine();
+                diagnosticInfo.AppendLine(e.ToString());
+
+                try
+                {
+                    string dumpFileName = $"update_failure_{DateTime.Now:yyyyMMdd-HHmmss}.log";
+                    string dumpPath = Path.Combine(ApplicationDataHelper.GetCCMDataPathCreateIfNotExists(), dumpFileName);
+                    await FileSystem.WriteAllTextAsync(Path.Combine(dumpPath, $"update-crash-{DateTime.Now:yyyyMMdd-HHmmss}.log"), diagnosticInfo.ToString());
+                }
+                catch {} // dump failed for some reason, fail out and just return the exception
                 throw;
             }
         }
@@ -181,12 +206,10 @@ public class VelopackUpdateService
         string installedVersion = VelopackLocator.Current.CurrentlyInstalledVersion?.ToString();
         if(!string.IsNullOrWhiteSpace(installedVersion))
         {
-            bool pendingUpdate = ApplicationSettings.QuerySettings(x => x.PendingUpdate);
             string reportedVersion = ApplicationSettings.QuerySettings(x => x.ApplicationVersion).TrimStart('v');
-            if(pendingUpdate && installedVersion != reportedVersion)
+            if(installedVersion != reportedVersion)
             {
                 ApplicationSettings.QuerySettings(x => x.ApplicationVersion = $"v{installedVersion}");
-                ApplicationSettings.QuerySettings(x => x.PendingUpdate = false);
                 RecentlyUpdated = true;
             }
         }
