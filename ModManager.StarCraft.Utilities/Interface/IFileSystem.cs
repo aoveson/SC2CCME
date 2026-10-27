@@ -64,4 +64,9 @@ public interface IFileSystem
     /// Reads all bytes from a file, asynchronously
     /// </summary>
     Task<byte[]> ReadAllBytesAsync(string path);
+
+    /// <summary>
+    /// Writes all text to a file, asynchronously
+    /// </summary>
+    Task WriteAllTextAsync(string path, string text);
 }

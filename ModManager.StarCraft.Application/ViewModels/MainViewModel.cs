@@ -19,6 +19,7 @@ using Avalonia.Platform.Storage;
 using System.Collections.Generic;
 using ModManager.StarCraft.Base.Enum;
 using ModManager.StarCraft.Base.Package;
+using ModManager.StarCraft.Utilities;
 using System.Linq;
 using Avalonia.Input;
 
@@ -805,7 +806,21 @@ public partial class MainViewModel: ViewModelBase
 
             if(shouldUpdate == ButtonResult.Yes)
             {
-                Service.Get<VelopackUpdateService>().ApplyUpdate(e.Update);
+                try
+                {
+                    await Service.Get<VelopackUpdateService>().ApplyUpdateAsync(e.Update);
+                }
+                catch(Exception ex)
+                {
+                    await MessageBoxManager.GetMessageBoxStandard(
+                        "StarCraft II Custom Campaign Manager Extended",
+                        $"An error occurred while trying to update!\n{ex}\n\n" +
+                        $"An update failure log file should exist in {ApplicationDataHelper.CCMDataPath}.",
+                        ButtonEnum.Ok
+                    ).ShowAsync();
+
+                    App.ShutdownApplication();
+                }
             }
         }
 
