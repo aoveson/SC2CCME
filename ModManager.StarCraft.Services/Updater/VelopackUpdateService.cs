@@ -161,13 +161,15 @@ public class VelopackUpdateService
     /// Applies the specified update and optionally restarts the application.
     /// </summary>
     /// <param name="result">The update result to apply.</param>
-    public async Task ApplyUpdateAsync(UpdateResult? result)
+    /// <param name="updateProgress">The callback for progress of downloading the update</param>
+    public async Task ApplyUpdateAsync(UpdateResult? result, Action<int> updateProgress)
     {
         if (result != null && !_updatesDisabled)
         {
             try
             {
-                _manager!.ApplyUpdatesAndRestart(result.Info);
+                await _manager.DownloadUpdatesAsync(result.Info, updateProgress);
+                _manager.ApplyUpdatesAndRestart(result.Info);
             }
             catch (Exception e)
             {

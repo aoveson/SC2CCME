@@ -38,7 +38,9 @@
             <RowDefinition Height="10*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Margin="2">
+        <Grid Grid.Row="0" 
+              Margin="2"
+              IsVisible="{Binding !ShowDownloadProgress}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -354,7 +356,9 @@
                 </StackPanel>
             </GroupBox>
         </Grid>
-        <Grid Grid.Row="1" Margin="2">
+        <Grid Grid.Row="1" 
+              Margin="2"
+              IsVisible="{Binding !ShowDownloadProgress}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="4*"/>
                 <ColumnDefinition Width="4*"/>
@@ -423,6 +427,25 @@
                 </TextBlock>
             </Button>
             
+        </Grid>
+
+        <Grid Grid.RowSpan="2"
+              IsVisible="{Binding ShowDownloadProgress}">
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="320"
+                        Spacing="15">
+                <TextBlock Text="Downloading Update"
+                           TextAlignment="Center"
+                           FontWeight="Bold" />
+                <ProgressBar Minimum="0"
+                             Maximum="100"
+                             Value="{Binding DownloadProgress}"/>
+                <TextBlock TextAlignment="Center">
+                    <Run Text="{Binding DownloadProgress}"/><Run Text="%" />
+                </TextBlock>
+                             
+            </StackPanel>
         </Grid>
     </Grid>
 
