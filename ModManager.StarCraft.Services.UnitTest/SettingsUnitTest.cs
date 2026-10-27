@@ -125,16 +125,13 @@ public sealed class SettingsUnitTest : IDisposable
         ApplicationSettings settings = new();
 
         Assert.Equal(UpdateSourceOption.Github, settings.UpdateSource);
-        Assert.False(settings.PendingUpdate);
         Assert.Null(settings.WebUpdateSourceUri);
 
         settings.UpdateSource = UpdateSourceOption.Directory;
-        settings.PendingUpdate = true;
         settings.WebUpdateSourceUri = "https://example.test/update";
         settings.DirectoryUpdateSourcePath = "updates";
 
         Assert.Equal(UpdateSourceOption.Directory, settings.UpdateSource);
-        Assert.True(settings.PendingUpdate);
         Assert.Equal("https://example.test/update", settings.WebUpdateSourceUri);
         Assert.Equal("updates", settings.DirectoryUpdateSourcePath);
 
